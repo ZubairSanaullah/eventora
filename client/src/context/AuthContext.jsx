@@ -1,9 +1,11 @@
 import React from "react";
+import api from "../utils/axios";
+
 export const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = React.useState(null);
-    const [loading, setLoading] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -20,7 +22,7 @@ export const AuthProvider = ({ children }) => {
             setUser(data);
             localStorage.setItem('user', JSON.stringify(data));
             localStorage.setItem('token', data.token);
-            return true;
+            return data;
         } catch (err) {
             throw err;
         }
@@ -29,21 +31,19 @@ export const AuthProvider = ({ children }) => {
     const register = async (name, email, password) => {
         try {
             const { data } = await api.post('/auth/register', { name, email, password });
-            localStorage.setItem('user', JSON.stringify(data));
-            localStorage.setItem('token', data.token);
-            return true;
+            return data;
         } catch (err) {
             throw err;
         }
     };
 
-    const verifyOtp = async () => {
+    const verifyOtp = async (email, otp) => {
         try {
-            const { data } = await api.post('/auth/verify-otp');
+            const { data } = await api.post('/auth/verify-otp', { email, otp });
             setUser(data);
             localStorage.setItem('user', JSON.stringify(data));
             localStorage.setItem('token', data.token);
-            return true;
+            return data;
         } catch (err) {
             throw err;
         }
