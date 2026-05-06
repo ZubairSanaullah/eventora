@@ -1,7 +1,12 @@
 const OTP = require("../models/OTP.js");
 const User = require("../models/User.js");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { sendOTPEmail } = require("../utils/email.js");
+const jwt = require("jsonwebtoken");
+
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+};
 
 // Register User
 exports.registerUser = async (req, res) => {
@@ -23,7 +28,6 @@ exports.registerUser = async (req, res) => {
       role: "user",
       isVerified: false,
     });
-    res.status(201).json({ message: "User registered successfully" });
 
     const otp = Math.floor(100000 * Math.random() * 999999).toString();
     console.log(`OTP for ${email}: ${otp}`);
@@ -68,5 +72,30 @@ exports.loginUser = async (req, res) => {
     name: user.name,
     email: user.email,
     role: user.role,
+    token: generateToken(user._id, user.role),
+  });
+};
+
+
+// Verify OTP
+exports.verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  const otpRecord = await OTP.findOne({ email, otp, action: "account_verification" });
+  if (!otpRecord) {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+
+  const user = await User.findOneAndUpdate({ email }, { $set: { isVerified: true } });
+
+  await OTP.deleteMany({ email, otp, action: "account_verification" });
+
+  res.json({
+    message: "User verified successfully",
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    token: generateToken(user._id, user.role),
   });
 };
