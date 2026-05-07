@@ -1,3 +1,6 @@
+const dns = require('node:dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
@@ -29,7 +32,7 @@ const events = [
         category: 'Technology',
         totalSeats: 200,
         ticketPrice: 0,
-        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800'
+        imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800'
     },
     {
         title: 'Neon Nights EDM Festival',
@@ -39,7 +42,7 @@ const events = [
         category: 'Music',
         totalSeats: 500,
         ticketPrice: 1500,
-        image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800'
+        imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800'
     },
     {
         title: 'Global Leaders Business Summit',
@@ -49,7 +52,7 @@ const events = [
         category: 'Business',
         totalSeats: 150,
         ticketPrice: 5000,
-        image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800'
+        imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800'
     },
     {
         title: 'Modern Art Expo 2024',
@@ -59,7 +62,7 @@ const events = [
         category: 'Art',
         totalSeats: 300,
         ticketPrice: 200,
-        image: 'https://images.unsplash.com/photo-1536924940846-227afb31e2a5?auto=format&fit=crop&q=80&w=800'
+        imageUrl: 'https://images.unsplash.com/photo-1536924940846-227afb31e2a5?auto=format&fit=crop&q=80&w=800'
     },
     {
         title: 'Startup Pitch & Pitch Competition',
@@ -69,7 +72,7 @@ const events = [
         category: 'Business',
         totalSeats: 250,
         ticketPrice: 100,
-        image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800'
+        imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800'
     },
     {
         title: 'Cloud Computing Architecture Seminar',
@@ -79,13 +82,13 @@ const events = [
         category: 'Technology',
         totalSeats: 100,
         ticketPrice: 600,
-        image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800'
+        imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800'
     }
 ];
 
 const seedDatabase = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/eventora');
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/eventora');
         console.log('\n✅ MongoDB connection open...');
 
         await User.deleteMany();
@@ -131,10 +134,10 @@ const seedDatabase = async () => {
                 const statuses = ['pending', 'confirmed', 'cancelled'];
                 const status = statuses[Math.floor(Math.random() * statuses.length)];
 
-                let paymentStatus = 'not_paid';
+                let paymentStatus = 'non-paid';
                 if (status === 'confirmed' && event.ticketPrice > 0) {
                     // Usually confirmed tickets are marked paid (90% of the time)
-                    paymentStatus = Math.random() > 0.1 ? 'paid' : 'not_paid';
+                    paymentStatus = Math.random() > 0.1 ? 'paid' : 'non-paid';
                 } else if (event.ticketPrice === 0) {
                     paymentStatus = 'paid';
                 }

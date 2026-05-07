@@ -1,78 +1,140 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaTicketAlt, FaGithub, FaTwitter, FaLinkedin, FaHeart } from 'react-icons/fa';
+import { FaTicketAlt, FaGithub, FaTwitter, FaLinkedin, FaHeart, FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
 
 const Footer = () => {
+    const currentYear = new Date().getFullYear();
+
     return (
         <footer style={{
-            borderTop: '1px solid var(--border-subtle)',
             background: 'var(--bg-secondary)',
-            paddingTop: '60px',
-            paddingBottom: '30px'
+            borderTop: '1px solid var(--border-subtle)',
+            position: 'relative',
+            paddingTop: '80px',
+            paddingBottom: '40px',
+            marginTop: 'auto'
         }}>
-            {/* Gradient accent line */}
+            {/* Top accent line */}
             <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
                 height: '2px',
-                background: 'var(--gradient-primary)',
-                position: 'relative',
-                top: '-60px',
-                marginBottom: '-60px'
+                background: 'var(--gradient-primary)'
             }} />
 
             <div className="container">
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '40px',
-                    marginBottom: '48px'
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                    gap: '48px',
+                    marginBottom: '64px'
                 }}>
-                    {/* Brand */}
-                    <div>
-                        <div style={{
+                    {/* Brand Section */}
+                    <div style={{ maxWidth: '320px' }}>
+                        <Link to="/" style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '10px',
-                            marginBottom: '16px'
+                            gap: '12px',
+                            textDecoration: 'none',
+                            marginBottom: '24px'
                         }}>
-                            <FaTicketAlt style={{ fontSize: '1.2rem', color: 'var(--accent-cyan)' }} />
-                            <span className="gradient-text" style={{ fontSize: '1.2rem', fontWeight: '800' }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: 'var(--radius-md)',
+                                background: 'var(--gradient-primary)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#fff',
+                                fontSize: '1.2rem'
+                            }}>
+                                <FaTicketAlt />
+                            </div>
+                            <span className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: '900', letterSpacing: '-0.5px' }}>
                                 Eventora
                             </span>
-                        </div>
+                        </Link>
                         <p style={{
                             color: 'var(--text-secondary)',
-                            fontSize: '0.875rem',
-                            lineHeight: '1.7'
+                            fontSize: '0.95rem',
+                            lineHeight: '1.8',
+                            marginBottom: '28px'
                         }}>
-                            Discover, book, and manage world-class events. Your premium event management platform.
+                            The world's leading platform for discovering and booking extraordinary experiences. Join our community and never miss out.
                         </p>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            {[
+                                { icon: <FaGithub />, href: '#' },
+                                { icon: <FaTwitter />, href: '#' },
+                                { icon: <FaLinkedin />, href: '#' }
+                            ].map((social, i) => (
+                                <a key={i} href={social.href} className="social-link" style={{
+                                    width: '38px',
+                                    height: '38px',
+                                    borderRadius: '10px',
+                                    background: 'var(--bg-card)',
+                                    border: '1px solid var(--border-subtle)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--text-secondary)',
+                                    transition: 'all 0.3s ease',
+                                    textDecoration: 'none'
+                                }}>
+                                    {social.icon}
+                                </a>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Quick Links */}
+                    {/* Navigation */}
                     <div>
                         <h4 style={{
-                            fontSize: '0.85rem',
-                            fontWeight: '700',
-                            textTransform: 'uppercase',
-                            letterSpacing: '1px',
                             color: 'var(--text-primary)',
-                            marginBottom: '20px'
-                        }}>Quick Links</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            fontSize: '1rem',
+                            fontWeight: '700',
+                            marginBottom: '24px',
+                            position: 'relative',
+                            paddingLeft: '14px'
+                        }}>
+                            <div style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: '4px',
+                                height: '14px',
+                                background: 'var(--accent-cyan)',
+                                borderRadius: '2px'
+                            }} />
+                            Quick Links
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {[
-                                { to: '/', label: 'Browse Events' },
+                                { to: '/', label: 'Explore Events' },
+                                { to: '/dashboard', label: 'My Bookings' },
                                 { to: '/login', label: 'Sign In' },
-                                { to: '/register', label: 'Create Account' },
-                                { to: '/dashboard', label: 'My Bookings' }
+                                { to: '/register', label: 'Join Eventora' }
                             ].map(link => (
                                 <Link key={link.to} to={link.to} style={{
                                     color: 'var(--text-secondary)',
                                     textDecoration: 'none',
-                                    fontSize: '0.875rem',
-                                    transition: 'color var(--transition-fast)'
+                                    fontSize: '0.9rem',
+                                    transition: 'all 0.2s ease',
+                                    display: 'inline-block',
+                                    width: 'fit-content'
                                 }}
-                                    onMouseOver={e => e.currentTarget.style.color = 'var(--accent-cyan)'}
-                                    onMouseOut={e => e.currentTarget.style.color = 'var(--text-secondary)'}
+                                    onMouseOver={e => {
+                                        e.currentTarget.style.color = 'var(--accent-cyan)';
+                                        e.currentTarget.style.transform = 'translateX(5px)';
+                                    }}
+                                    onMouseOut={e => {
+                                        e.currentTarget.style.color = 'var(--text-secondary)';
+                                        e.currentTarget.style.transform = 'translateX(0)';
+                                    }}
                                 >
                                     {link.label}
                                 </Link>
@@ -83,107 +145,125 @@ const Footer = () => {
                     {/* Categories */}
                     <div>
                         <h4 style={{
-                            fontSize: '0.85rem',
-                            fontWeight: '700',
-                            textTransform: 'uppercase',
-                            letterSpacing: '1px',
                             color: 'var(--text-primary)',
-                            marginBottom: '20px'
-                        }}>Categories</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            fontSize: '1rem',
+                            fontWeight: '700',
+                            marginBottom: '24px',
+                            position: 'relative',
+                            paddingLeft: '14px'
+                        }}>
+                            <div style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: '4px',
+                                height: '14px',
+                                background: 'var(--accent-purple)',
+                                borderRadius: '2px'
+                            }} />
+                            Categories
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {['Technology', 'Music', 'Business', 'Art', 'Sports'].map(cat => (
-                                <span key={cat} style={{
+                                <Link key={cat} to={`/?category=${cat}`} style={{
                                     color: 'var(--text-secondary)',
-                                    fontSize: '0.875rem'
-                                }}>
+                                    textDecoration: 'none',
+                                    fontSize: '0.9rem',
+                                    transition: 'all 0.2s ease',
+                                    display: 'inline-block',
+                                    width: 'fit-content'
+                                }}
+                                    onMouseOver={e => {
+                                        e.currentTarget.style.color = 'var(--accent-purple)';
+                                        e.currentTarget.style.transform = 'translateX(5px)';
+                                    }}
+                                    onMouseOut={e => {
+                                        e.currentTarget.style.color = 'var(--text-secondary)';
+                                        e.currentTarget.style.transform = 'translateX(0)';
+                                    }}
+                                >
                                     {cat}
-                                </span>
+                                </Link>
                             ))}
                         </div>
                     </div>
 
-                    {/* Connect */}
+                    {/* Contact */}
                     <div>
                         <h4 style={{
-                            fontSize: '0.85rem',
-                            fontWeight: '700',
-                            textTransform: 'uppercase',
-                            letterSpacing: '1px',
                             color: 'var(--text-primary)',
-                            marginBottom: '20px'
-                        }}>Connect</h4>
-                        <div style={{ display: 'flex', gap: '14px' }}>
-                            {[
-                                { icon: <FaGithub />, href: '#' },
-                                { icon: <FaTwitter />, href: '#' },
-                                { icon: <FaLinkedin />, href: '#' }
-                            ].map((social, i) => (
-                                <a key={i} href={social.href} style={{
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid var(--border-subtle)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: 'var(--text-secondary)',
-                                    textDecoration: 'none',
-                                    fontSize: '1rem',
-                                    transition: 'all var(--transition-fast)'
-                                }}
-                                    onMouseOver={e => {
-                                        e.currentTarget.style.borderColor = 'var(--accent-cyan)';
-                                        e.currentTarget.style.color = 'var(--accent-cyan)';
-                                        e.currentTarget.style.background = 'rgba(0, 212, 255, 0.1)';
-                                    }}
-                                    onMouseOut={e => {
-                                        e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                                        e.currentTarget.style.color = 'var(--text-secondary)';
-                                        e.currentTarget.style.background = 'transparent';
-                                    }}
-                                >
-                                    {social.icon}
-                                </a>
-                            ))}
-                        </div>
-                        <p style={{
-                            color: 'var(--text-muted)',
-                            fontSize: '0.8rem',
-                            marginTop: '20px',
-                            lineHeight: '1.6'
+                            fontSize: '1rem',
+                            fontWeight: '700',
+                            marginBottom: '24px',
+                            position: 'relative',
+                            paddingLeft: '14px'
                         }}>
-                            hello@eventora.com
-                        </p>
+                            <div style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: '4px',
+                                height: '14px',
+                                background: 'var(--accent-pink)',
+                                borderRadius: '2px'
+                            }} />
+                            Get in Touch
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                <FaEnvelope style={{ color: 'var(--accent-cyan)' }} />
+                                hello@eventora.com
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                                <FaPhone style={{ color: 'var(--accent-purple)' }} />
+                                +1 (555) 000-1234
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.4' }}>
+                                <FaMapMarkerAlt style={{ color: 'var(--accent-pink)', flexShrink: 0 }} />
+                                123 Innovation Drive, Silicon Valley, CA
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Bottom bar */}
+                {/* Bottom Bar */}
                 <div style={{
                     borderTop: '1px solid var(--border-subtle)',
-                    paddingTop: '24px',
+                    paddingTop: '32px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     flexWrap: 'wrap',
-                    gap: '12px'
+                    gap: '20px'
                 }}>
-                    <p style={{
-                        color: 'var(--text-muted)',
-                        fontSize: '0.8rem'
-                    }}>
-                        © {new Date().getFullYear()} Eventora. All rights reserved.
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                        © {currentYear} Eventora Platform. All rights reserved. Built for creators.
                     </p>
-                    <p style={{
-                        color: 'var(--text-muted)',
-                        fontSize: '0.8rem',
+                    <div style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px'
+                        gap: '6px',
+                        color: 'var(--text-muted)',
+                        fontSize: '0.85rem'
                     }}>
-                        Made with <FaHeart style={{ color: 'var(--accent-red)', fontSize: '0.7rem' }} /> by Eventora Team
-                    </p>
+                        Made with <FaHeart style={{ color: 'var(--accent-red)', fontSize: '0.75rem' }} /> by
+                        <span style={{ color: 'var(--text-primary)', fontWeight: '600' }}> Eventora Team</span>
+                    </div>
                 </div>
             </div>
+
+            {/* Custom Styles */}
+            <style>{`
+                .social-link:hover {
+                    border-color: var(--accent-cyan) !important;
+                    color: var(--accent-cyan) !important;
+                    background: rgba(0, 212, 255, 0.08) !important;
+                    transform: translateY(-3px);
+                    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.15);
+                }
+            `}</style>
         </footer>
     );
 };

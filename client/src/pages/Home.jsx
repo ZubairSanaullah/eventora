@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import api from '../utils/axios';
 import EventCard from '../components/EventCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -12,9 +12,18 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState('All');
 
+    const location = useLocation();
+
     useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const cat = params.get('category');
+        if (cat && categories.includes(cat)) {
+            setActiveCategory(cat);
+        } else {
+            setActiveCategory('All');
+        }
         fetchEvents();
-    }, []);
+    }, [location.search]);
 
     const fetchEvents = async () => {
         try {
