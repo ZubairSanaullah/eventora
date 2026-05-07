@@ -20,6 +20,10 @@ app.use("/api/auth", authRoutes);
 app.use('/api/events', eventRoutes)
 app.use('/api/bookings', bookingRoutes)
 
+app.get("/", (req, res) => {
+  res.send("Eventora API is running...");
+});
+
 // Connect to MongoDB
 const uri = process.env.MONGODB_URI;
 
