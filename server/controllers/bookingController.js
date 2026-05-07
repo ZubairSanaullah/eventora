@@ -68,12 +68,10 @@ exports.bookEvent = async (req, res) => {
   res.status(201).json({ message: "Booking created successfully", booking });
 };
 
-// Get bookings for the logged-in user
-exports.getMyBookings = async (req, res) => {
+// Get all bookings (Admin only)
+exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ user: req.user._id }).populate(
-      "event",
-    );
+    const bookings = await Booking.find().populate("eventId").populate("userId");
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -119,12 +117,16 @@ exports.confirmBooking = async (req, res) => {
   }
 };
 
-// Get bookings
+// Get bookings for the logged-in user
 exports.getMyBookings = async (req, res) => {
-  const bookings = await Booking.find({ userId: req.user._id }).populate(
-    "eventId",
-  );
-  res.json(bookings);
+  try {
+    const bookings = await Booking.find({ userId: req.user._id }).populate(
+      "eventId",
+    );
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Cancel a booking

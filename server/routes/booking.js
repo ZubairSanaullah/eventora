@@ -7,7 +7,9 @@ const {
   cancelBooking,
   sendBookingOTP,
   confirmBooking,
+  getAllBookings,
 } = require("../controllers/bookingController.js");
+
 
 // Book an event
 router.post("/", protect, bookEvent);
@@ -15,8 +17,12 @@ router.post("/", protect, bookEvent);
 // Verify booking
 router.post("/send-otp", protect, sendBookingOTP);
 
+// Get all bookings (Admin only)
+router.get("/all", protect, admin, getAllBookings);
+
 // Get my bookings
 router.get("/my", protect, getMyBookings);
+
 
 // Confirm booking
 router.put("/:id/confirm", protect, admin, confirmBooking);

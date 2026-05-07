@@ -22,9 +22,11 @@ const AdminDashboard = () => {
             setEvents(evRes.data);
             // Fetch bookings for each event's users (admin sees all via my-bookings or a workaround)
             try {
-                const bkRes = await api.get('/bookings/my');
+                const bkRes = await api.get('/bookings/all');
                 setBookings(bkRes.data);
-            } catch (e) { /* Admin may not have bookings */ }
+            } catch (e) {
+                console.error('Failed to fetch bookings:', e);
+            }
         } catch (err) {
             console.error(err);
         } finally {
@@ -111,20 +113,78 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Stats */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
                     {[
                         { label: 'Total Events', value: events.length, color: 'var(--accent-cyan)', icon: <FaCalendarAlt /> },
                         { label: 'Total Bookings', value: bookings.length, color: 'var(--accent-purple)', icon: <FaChartBar /> },
-                        { label: 'Revenue', value: `$${bookings.reduce((s, b) => s + (b.amount || 0), 0).toLocaleString()}`, color: 'var(--accent-green)', icon: <FaChartBar /> },
+                        { 
+                            label: 'Total Revenue', 
+                            value: `$${bookings.reduce((s, b) => s + (b.amount || 0), 0).toLocaleString()}`, 
+                            color: 'var(--accent-green)', 
+                            icon: <FaChartBar />,
+                            sub: `${bookings.filter(b => b.paymentStatus === 'paid').length} Paid`
+                        },
                     ].map((s, i) => (
-                        <div key={i} className="glass-card-static" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                            <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color, fontSize: '1.1rem' }}>{s.icon}</div>
+                        <div key={i} className="glass-card-static" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+                            <div style={{ width: '52px', height: '52px', borderRadius: 'var(--radius-md)', background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color, fontSize: '1.4rem' }}>{s.icon}</div>
                             <div>
-                                <div style={{ fontSize: '1.5rem', fontWeight: '800', color: s.color }}>{s.value}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.label}</div>
+                                <div style={{ fontSize: '1.75rem', fontWeight: '800', color: s.color, lineHeight: '1.2' }}>{s.value}</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>{s.label}</div>
+                                {s.sub && <div style={{ fontSize: '0.7rem', color: 'var(--accent-green)', fontWeight: '600', marginTop: '4px' }}>{s.sub}</div>}
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Revenue Breakdown */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+                    <div className="glass-card-static" style={{ padding: '24px' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <FaChartBar style={{ color: 'var(--accent-cyan)' }} /> Revenue Breakdown
+                        </h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {[
+                                { label: 'Paid Revenue', amount: bookings.filter(b => b.paymentStatus === 'paid').reduce((s, b) => s + (b.amount || 0), 0), color: 'var(--accent-green)' },
+                                { label: 'Pending Revenue', amount: bookings.filter(b => b.paymentStatus === 'non-paid').reduce((s, b) => s + (b.amount || 0), 0), color: 'var(--accent-amber)' },
+                            ].map((item, i) => (
+                                <div key={i}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9rem' }}>
+                                        <span style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+                                        <span style={{ fontWeight: '700', color: item.color }}>${item.amount.toLocaleString()}</span>
+                                    </div>
+                                    <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                                        <div style={{ 
+                                            height: '100%', 
+                                            background: item.color, 
+                                            width: `${(item.amount / (bookings.reduce((s, b) => s + (b.amount || 0), 0) || 1)) * 100}%` 
+                                        }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="glass-card-static" style={{ padding: '24px' }}>
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <FaCalendarAlt style={{ color: 'var(--accent-purple)' }} /> Top Events by Revenue
+                        </h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {events
+                                .map(ev => ({
+                                    title: ev.title,
+                                    revenue: bookings.filter(b => b.eventId?._id === ev._id && b.paymentStatus === 'paid').reduce((s, b) => s + (b.amount || 0), 0)
+                                }))
+                                .sort((a, b) => b.revenue - a.revenue)
+                                .slice(0, 3)
+                                .map((item, i) => (
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-sm)' }}>
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }}>{item.title}</span>
+                                        <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-primary)' }}>${item.revenue.toLocaleString()}</span>
+                                    </div>
+                                ))}
+                            {events.length === 0 && <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>No events data</p>}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Tabs */}
