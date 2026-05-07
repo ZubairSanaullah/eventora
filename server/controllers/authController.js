@@ -29,7 +29,7 @@ exports.registerUser = async (req, res) => {
       isVerified: false,
     });
 
-    const otp = Math.floor(100000 * Math.random() * 999999).toString();
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     console.log(`OTP for ${email}: ${otp}`);
     await OTP.create({ otp, email, action: "account_verification" });
     await sendOTPEmail(email, otp, "account_verification");
@@ -59,7 +59,7 @@ exports.loginUser = async (req, res) => {
   }
 
   if (!user.isVerified && user.role === "user") {
-    const otp = Math.floor(100000 * Math.random() * 999999).toString();
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await OTP.deleteMany({ email, action: "account_verification" });
     await OTP.create({ otp, email, action: "account_verification" });
     await sendOTPEmail(email, otp, "account_verification");
